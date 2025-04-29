@@ -4,12 +4,15 @@ let birdY = 150, birdVY = 0, gravity = 0.5, flapPower = -8;
 let isGameRunning = false;
 
 window.onload = () => {
-    document.body.innerHTML = '<canvas id="gameCanvas" width="400" height="600"></canvas>';
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
 
-    canvas.addEventListener('click', flap);
-    startGameLoop();
+    document.getElementById('playButton').onclick = () => {
+        document.getElementById('playButton').style.display = 'none';
+        canvas.style.display = 'block';
+        canvas.addEventListener('click', flap);
+        startGameLoop();
+    };
 };
 
 function startGameLoop() {
@@ -27,7 +30,6 @@ function update() {
     birdVY += gravity;
     birdY += birdVY;
 
-    // Check boundaries
     if (birdY < 0 || birdY > canvas.height) {
         endGame();
         return;
@@ -38,10 +40,11 @@ function update() {
 }
 
 function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#87CEEB';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#FFD700'; // golden bird
+    ctx.fillStyle = '#FFD700';
     ctx.beginPath();
     ctx.arc(100, birdY, 15, 0, Math.PI * 2);
     ctx.fill();
