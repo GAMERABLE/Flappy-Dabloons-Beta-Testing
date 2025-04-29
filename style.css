@@ -1,8 +1,30 @@
 body {
   margin: 0;
   overflow: hidden;
-  background-color: skyblue;
+  font-family: 'Arial', sans-serif;
+  background-color: #87ceeb;
 }
 canvas {
   display: block;
+}
+#gameOverScreen, #playButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 2px solid #000;
+  display: none;
+}
+.logo {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(to right, yellow, orange);
+  padding: 5px 10px;
+  border-radius: 10px;
 }
