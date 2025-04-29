@@ -3,7 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Flappy Dabloons</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background: #111;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        #gameCanvas {
+            display: none;
+            background: #222;
+            margin-top: 20px;
+        }
+        #playButton {
+            padding: 12px 30px;
+            font-size: 20px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h1 id="introText">GAMERABLE studios presents to you</h1>
@@ -11,6 +31,69 @@
     <button id="playButton" style="display:none;">Play</button>
     <canvas id="gameCanvas" width="400" height="600"></canvas>
 
-    <script src="game.js" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const introText = document.getElementById("introText");
+            const gameTitle = document.getElementById("gameTitle");
+            const playButton = document.getElementById("playButton");
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+
+            // Intro animation
+            setTimeout(() => {
+                introText.style.display = "none";
+                gameTitle.style.display = "block";
+                playButton.style.display = "inline-block";
+            }, 2000);
+
+            // Game logic on play
+            playButton.addEventListener("click", () => {
+                gameTitle.style.display = "none";
+                playButton.style.display = "none";
+                canvas.style.display = "block";
+                startGame();
+            });
+
+            function startGame() {
+                let y = 150;
+                let velocity = 0;
+                let gravity = 0.5;
+
+                document.addEventListener("keydown", flap);
+                canvas.addEventListener("click", flap);
+
+                function flap() {
+                    velocity = -8;
+                }
+
+                function loop() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    velocity += gravity;
+                    y += velocity;
+
+                    // Draw bird
+                    ctx.beginPath();
+                    ctx.arc(100, y, 20, 0, Math.PI * 2);
+                    ctx.fillStyle = "gold";
+                    ctx.fill();
+
+                    // Check boundaries
+                    if (y > canvas.height || y < 0) {
+                        endGame();
+                        return;
+                    }
+
+                    requestAnimationFrame(loop);
+                }
+
+                loop();
+            }
+
+            function endGame() {
+                alert("Game Over!");
+                location.reload();
+            }
+        });
+    </script>
 </body>
 </html>
