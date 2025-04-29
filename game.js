@@ -1,4 +1,3 @@
-
 let canvas, ctx;
 let birdY = 150, birdVY = 0, gravity = 0.5, flapPower = -8;
 let isGameRunning = false;
@@ -7,7 +6,17 @@ window.onload = () => {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
 
+    setTimeout(() => {
+        document.getElementById('introText').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('introText').style.display = 'none';
+            document.getElementById('gameTitle').style.display = 'block';
+            document.getElementById('playButton').style.display = 'inline-block';
+        }, 2000);
+    }, 2000);
+
     document.getElementById('playButton').onclick = () => {
+        document.getElementById('gameTitle').style.display = 'none';
         document.getElementById('playButton').style.display = 'none';
         canvas.style.display = 'block';
         canvas.addEventListener('click', flap);
