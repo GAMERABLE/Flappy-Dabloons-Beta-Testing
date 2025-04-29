@@ -1,27 +1,46 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 let birdY = canvas.height / 2;
-let gravity = 0.6;
 let velocity = 0;
-let flapPower = -10;
+const gravity = 0.5;
+const flapPower = -10;
+const birdRadius = 20;
 
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    velocity += gravity;
-    birdY += velocity;
-
-    // Draw the bird
-    ctx.beginPath();
-    ctx.arc(100, birdY, 20, 0, Math.PI * 2);
-    ctx.fillStyle = "gold";
-    ctx.fill();
-
-    requestAnimationFrame(gameLoop);
+function drawBird() {
+  ctx.beginPath();
+  ctx.arc(60, birdY, birdRadius, 0, Math.PI * 2);
+  ctx.fillStyle = "gold";
+  ctx.fill();
 }
 
+function update() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  velocity += gravity;
+  birdY += velocity;
+
+  // Prevent bird from going offscreen
+  if (birdY + birdRadius > canvas.height || birdY - birdRadius < 0) {
+    birdY = canvas.height / 2;
+    velocity = 0;
+  }
+
+  drawBird();
+  requestAnimationFrame(update);
+}
+
+// Controls
 window.addEventListener("keydown", () => {
-    velocity = flapPower;
+  velocity = flapPower;
+});
+window.addEventListener("touchstart", () => {
+  velocity = flapPower;
+});
+window.addEventListener("mousedown", () => {
+  velocity = flapPower;
 });
 
-gameLoop();
+update();
