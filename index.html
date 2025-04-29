@@ -1,39 +1,52 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flappy Dabloons</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Dabloons</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(to bottom, #ffde59, #f08080);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #222;
+        }
+        #playBtn {
+            margin-top: 20px;
+            font-size: 1.5em;
+            padding: 10px 30px;
+            background-color: #fff;
+            color: #000;
+            border: 3px dashed #ff1493;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #playBtn:hover {
+            background-color: #ff1493;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-  <div id="titleScreen">
-    <h1 class="logo">GAMERABLE Studios</h1>
-    <button id="playButton">Play</button>
-  </div>
-  <canvas id="gameCanvas"></canvas>
-  <div id="gameOverScreen">
-    <h2>Game Over</h2>
-    <p>Dabloons: <span id="dabloonCount">0</span></p>
-    <button id="retryBtn">Retry</button>
-    <button id="shopBtn">Shop</button>
-    <button id="casinoBtn">Casino</button>
-  </div>
-  <div id="shopScreen" class="popup">
-    <h2>Shop</h2>
-    <p>Funny item: 20 Dabloons</p>
-    <button onclick="buyItem()">Buy</button>
-    <button onclick="closeShop()">Close</button>
-  </div>
-  <div id="casinoScreen" class="popup">
-    <h2>Casino</h2>
-    <p>Bet Amount: <span id="betAmount">10</span> Dabloons</p>
-    <button onclick="adjustBet(-10)">-10</button>
-    <button onclick="adjustBet(10)">+10</button>
-    <button onclick="spinCasino()">Spin</button>
-    <div id="casinoResult"></div>
-    <button onclick="closeCasino()">Close</button>
-  </div>
-  <script src="game.js"></script>
+    <h1>GAMERABLE Studios</h1>
+    <button id="playBtn" onclick="startGame()">► Play the Chaos</button>
+
+    <script>
+        function startGame() {
+            alert("Game starting... (placeholder for actual game load)");
+            // Here you'd normally load your game logic or redirect to the game screen
+        }
+    </script>
 </body>
 </html>
