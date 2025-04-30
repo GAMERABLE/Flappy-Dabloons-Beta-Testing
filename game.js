@@ -1,38 +1,62 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+document.addEventListener('DOMContentLoaded', () => {
+    let gameStarted = false;
 
-const birdImg = new Image();
-birdImg.src = "images/bird.png";
+    const startButton = document.getElementById('startButton');
+    const gameCanvas = document.getElementById('gameCanvas');
+    const ctx = gameCanvas.getContext('2d');
+    const bird = { x: 50, y: 150, width: 20, height: 20, gravity: 0.6, velocity: 0, lift: -15 };
+    
+    // Setup gameCanvas size
+    gameCanvas.width = 320;
+    gameCanvas.height = 480;
 
-const pipeImg = new Image();
-pipeImg.src = "images/pipe.png";
+    startButton.addEventListener('click', () => {
+        if (!gameStarted) {
+            startGame();
+        }
+    });
 
-const bgImg = new Image();
-bgImg.src = "images/background.png";
+    function startGame() {
+        gameStarted = true;
+        startButton.style.display = 'none';  // Hide the start button
+        bird.y = 150; // Reset bird position
+        bird.velocity = 0;
+        gameLoop();
+    }
 
-let birdY = 250;
-let velocity = 0;
-let gravity = 0.6;
+    function gameLoop() {
+        if (gameStarted) {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+    }
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-  ctx.drawImage(birdImg, 100, birdY, 40, 40);
-  ctx.drawImage(pipeImg, 300, 400, 50, 200);
-}
+    function update() {
+        bird.velocity += bird.gravity;
+        bird.y += bird.velocity;
 
-function update() {
-  velocity += gravity;
-  birdY += velocity;
+        if (bird.y > gameCanvas.height - bird.height) {
+            bird.y = gameCanvas.height - bird.height;
+            bird.velocity = 0;
+        }
 
-  draw();
-  requestAnimationFrame(update);
-}
+        if (bird.y < 0) {
+            bird.y = 0;
+            bird.velocity = 0;
+        }
+    }
 
-canvas.addEventListener("click", () => {
-  velocity = -8;
+    function draw() {
+        ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+        ctx.fillStyle = '#ff0'; // Bird color
+        ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+    }
+
+    // Control bird movement with spacebar
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && gameStarted) {
+            bird.velocity = bird.lift;
+        }
+    });
 });
-
-birdImg.onload = () => {
-  update();
-};
