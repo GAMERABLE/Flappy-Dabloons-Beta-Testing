@@ -1,107 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Flappy Dabloons</title>
   <style>
     body {
-      font-family: sans-serif;
-      text-align: center;
+      margin: 0;
       background: #111;
       color: white;
-      margin: 0;
-      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
     }
     #gameCanvas {
       display: none;
-      background: #222;
-      margin-top: 20px;
+      background-color: #222;
+      margin: 20px auto;
+      border: 2px solid #fff;
     }
     #playButton {
-      padding: 12px 30px;
+      display: none;
+      padding: 10px 25px;
       font-size: 20px;
-      margin-top: 20px;
+      margin-top: 10px;
+      background: gold;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1 id="introText">GAMERABLE studios presents to you</h1>
-  <h2 id="gameTitle" style="display:none;">Flappy Dabloons</h2>
-  <button id="playButton" style="display:none;">Play</button>
+  <h1 id="intro">GAMERABLE Studios presents to you</h1>
+  <h2 id="title" style="display: none;">Flappy Dabloons</h2>
+  <button id="playButton">Play</button>
   <canvas id="gameCanvas" width="400" height="600"></canvas>
 
   <script>
-    let gameStarted = false;
+    const intro = document.getElementById("intro");
+    const title = document.getElementById("title");
+    const playButton = document.getElementById("playButton");
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const introText = document.getElementById("introText");
-      const gameTitle = document.getElementById("gameTitle");
-      const playButton = document.getElementById("playButton");
-      const canvas = document.getElementById("gameCanvas");
-      const ctx = canvas.getContext("2d");
+    let y, velocity, gravity, isGameOver, animationId;
 
-      // Fade intro and show title + play
+    function resetGameState() {
+      y = 150;
+      velocity = 0;
+      gravity = 0.5;
+      isGameOver = false;
+    }
+
+    function startIntro() {
+      intro.style.display = "block";
+      title.style.display = "none";
+      playButton.style.display = "none";
+      canvas.style.display = "none";
+
       setTimeout(() => {
-        introText.style.display = "none";
-        gameTitle.style.display = "block";
+        intro.style.display = "none";
+        title.style.display = "block";
         playButton.style.display = "inline-block";
       }, 2000);
+    }
 
-      playButton.addEventListener("click", () => {
-        gameTitle.style.display = "none";
-        playButton.style.display = "none";
-        canvas.style.display = "block";
-        startGame();
-      });
+    function startGame() {
+      title.style.display = "none";
+      playButton.style.display = "none";
+      canvas.style.display = "block";
 
-      function startGame() {
-        let y = 150;
-        let velocity = 0;
-        let gravity = 0.5;
-        let isGameOver = false;
+      resetGameState();
+      document.removeEventListener("keydown", flap);
+      canvas.removeEventListener("click", flap);
+      document.addEventListener("keydown", flap);
+      canvas.addEventListener("click", flap);
+      loop();
+    }
 
-        function flap() {
-          if (!isGameOver) {
-            velocity = -8;
-          }
-        }
+    function flap() {
+      if (!isGameOver) velocity = -8;
+    }
 
-        document.addEventListener("keydown", flap);
-        canvas.addEventListener("click", flap);
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        function loop() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          velocity += gravity;
-          y += velocity;
+      velocity += gravity;
+      y += velocity;
 
-          ctx.beginPath();
-          ctx.arc(100, y, 20, 0, Math.PI * 2);
-          ctx.fillStyle = "gold";
-          ctx.fill();
+      ctx.beginPath();
+      ctx.arc(100, y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = "gold";
+      ctx.fill();
 
-          if (y > canvas.height || y < 0) {
-            isGameOver = true;
-            endGame();
-            return;
-          }
-
-          if (!isGameOver) requestAnimationFrame(loop);
-        }
-
-        loop();
-      }
-
-      function endGame() {
+      if (y > canvas.height || y < 0) {
+        isGameOver = true;
+        cancelAnimationFrame(animationId);
         setTimeout(() => {
           alert("Game Over!");
-          document.getElementById("playButton").innerText = "Play Again";
-          gameTitle.style.display = "block";
+          canvas.style.display = "none";
+          playButton.innerText = "Play Again";
           playButton.style.display = "inline-block";
-          document.getElementById("gameCanvas").style.display = "none";
         }, 100);
+        return;
       }
+
+      animationId = requestAnimationFrame(loop);
+    }
+
+    playButton.addEventListener("click", () => {
+      startGame();
     });
+
+    window.onload = () => {
+      startIntro();
+    };
   </script>
 </body>
 </html>
