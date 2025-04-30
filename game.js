@@ -4,11 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('startButton');
     const gameCanvas = document.getElementById('gameCanvas');
     const ctx = gameCanvas.getContext('2d');
+
+    // Set canvas to full window size
+    function resizeCanvas() {
+        gameCanvas.width = window.innerWidth;
+        gameCanvas.height = window.innerHeight - 60; // leave space for button
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); // Initial size
+
     const bird = { x: 50, y: 150, width: 20, height: 20, gravity: 0.6, velocity: 0, lift: -15 };
-    
-    // Setup gameCanvas size
-    gameCanvas.width = 320;
-    gameCanvas.height = 480;
 
     startButton.addEventListener('click', () => {
         if (!gameStarted) {
@@ -18,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startGame() {
         gameStarted = true;
-        startButton.style.display = 'none';  // Hide the start button
-        bird.y = 150; // Reset bird position
+        startButton.style.display = 'none';
+        bird.y = 150;
         bird.velocity = 0;
         gameLoop();
     }
@@ -49,11 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function draw() {
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-        ctx.fillStyle = '#ff0'; // Bird color
+        ctx.fillStyle = '#ff0';
         ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
     }
 
-    // Control bird movement with spacebar
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && gameStarted) {
             bird.velocity = bird.lift;
