@@ -1,2 +1,9 @@
-body { margin: 0; overflow: hidden; }
-canvas { display: block; background: url('images/background.png') no-repeat center center; background-size: cover; }
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  background-color: skyblue;
+}
