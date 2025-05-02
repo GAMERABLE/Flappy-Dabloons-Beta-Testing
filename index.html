@@ -2,25 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Flappy Dabloons</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="start-screen">
-    <h1>GAMERABLE Studios Presents...</h1>
-    <h2>Flappy Dabloons</h2>
-    <button onclick="startGame()">Play</button>
+  <div id="intro">
+    <h1>GAMERABLE studios presents to you...</h1>
+    <h2 id="gameTitle" style="display: none;">Flappy Dabloons</h2>
+    <button id="playButton" style="display: none;">Play</button>
   </div>
-
   <canvas id="gameCanvas"></canvas>
-
-  <div id="shop" class="hidden">
-    <h2>Shop</h2>
-    <p>You earned <span id="scoreDisplay">0</span> dabloons!</p>
-    <button onclick="restartGame()">Play Again</button>
+  <div id="shop" style="display: none;">
+    <h3>Welcome to the Shop!</h3>
+    <p>Come back later for more!</p>
+    <button onclick="restartGame()">Replay</button>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>

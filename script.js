@@ -1,115 +1,108 @@
-let canvas, ctx;
-let bird, pipes = [], gravity = 0.5, lift = -10, pipeSpeed = 2;
-let score = 0, gameOver = false;
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function startGame() {
-  document.getElementById("start-screen").classList.add("hidden");
-  canvas = document.getElementById("gameCanvas");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  ctx = canvas.getContext("2d");
-  canvas.style.display = "block";
+let bird = { x: 80, y: 200, width: 30, height: 30, velocity: 0 };
+let pipes = [];
+let gameRunning = false;
+let gravity = 0.5;
+let score = 0;
 
-  bird = {
-    x: 80,
-    y: canvas.height / 2,
-    radius: 20,
-    velocity: 0
-  };
-
-  pipes = [];
-  score = 0;
-  gameOver = false;
-
-  for (let i = 0; i < 3; i++) {
-    addPipe(i * 300 + 400);
-  }
-
-  window.addEventListener("touchstart", flap);
-  window.addEventListener("keydown", e => { if (e.code === "Space") flap(); });
-
-  loop();
+function drawBird() {
+  ctx.fillStyle = 'gold';
+  ctx.beginPath();
+  ctx.arc(bird.x, bird.y, bird.width / 2, 0, Math.PI * 2);
+  ctx.fill();
 }
 
-function flap() {
-  if (!gameOver) bird.velocity = lift;
+function drawPipes() {
+  ctx.fillStyle = 'green';
+  pipes.forEach(pipe => {
+    ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
+    ctx.fillRect(pipe.x, canvas.height - pipe.bottom, pipe.width, pipe.bottom);
+  });
 }
 
-function addPipe(x) {
-  let gap = 200;
-  let topHeight = Math.random() * (canvas.height - gap - 100) + 50;
-  pipes.push({ x, top: topHeight, bottom: topHeight + gap });
-}
-
-function loop() {
-  if (gameOver) return;
-
+function updateGame() {
+  if (!gameRunning) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Bird physics
   bird.velocity += gravity;
   bird.y += bird.velocity;
 
-  // Draw bird
-  ctx.beginPath();
-  ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
-  ctx.fillStyle = "gold";
-  ctx.fill();
+  pipes.forEach(pipe => {
+    pipe.x -= 4;
+  });
 
-  // Draw and move pipes
-  for (let i = 0; i < pipes.length; i++) {
-    let p = pipes[i];
-    p.x -= pipeSpeed;
+  if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 300) {
+    let top = Math.random() * 200 + 50;
+    let bottom = Math.random() * 200 + 50;
+    pipes.push({ x: canvas.width, width: 60, top: top, bottom: bottom });
+  }
 
-    ctx.fillStyle = "green";
-    ctx.fillRect(p.x, 0, 60, p.top);
-    ctx.fillRect(p.x, p.bottom, 60, canvas.height - p.bottom);
+  drawBird();
+  drawPipes();
 
-    // Collision
+  // Check collision
+  for (let pipe of pipes) {
     if (
-      bird.x + bird.radius > p.x &&
-      bird.x - bird.radius < p.x + 60 &&
-      (bird.y - bird.radius < p.top || bird.y + bird.radius > p.bottom)
+      bird.x + bird.width / 2 > pipe.x &&
+      bird.x - bird.width / 2 < pipe.x + pipe.width &&
+      (bird.y - bird.height / 2 < pipe.top || bird.y + bird.height / 2 > canvas.height - pipe.bottom)
     ) {
       endGame();
       return;
     }
-
-    // Score
-    if (p.x + 60 < bird.x && !p.scored) {
-      score += 5;
-      p.scored = true;
-    }
-
-    // Recycle pipes
-    if (p.x < -60) {
-      pipes.splice(i, 1);
-      addPipe(canvas.width);
-    }
   }
 
-  // Bird hits top/bottom
-  if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) {
+  if (bird.y + bird.height > canvas.height || bird.y < 0) {
     endGame();
     return;
   }
 
-  // Score
-  ctx.fillStyle = "black";
-  ctx.font = "24px Arial";
-  ctx.fillText(`Dabloons: ${score}`, 20, 40);
+  requestAnimationFrame(updateGame);
+}
 
-  requestAnimationFrame(loop);
+function flap() {
+  if (gameRunning) bird.velocity = -8;
 }
 
 function endGame() {
-  gameOver = true;
-  canvas.style.display = "none";
-  document.getElementById("shop").classList.remove("hidden");
-  document.getElementById("scoreDisplay").textContent = score;
+  gameRunning = false;
+  document.getElementById('shop').style.display = 'block';
+  canvas.style.display = 'none';
 }
 
 function restartGame() {
-  document.getElementById("shop").classList.add("hidden");
-  startGame();
+  bird.y = 200;
+  bird.velocity = 0;
+  pipes = [];
+  document.getElementById('shop').style.display = 'none';
+  canvas.style.display = 'block';
+  gameRunning = true;
+  updateGame();
 }
+
+document.body.addEventListener('touchstart', flap);
+document.body.addEventListener('keydown', e => {
+  if (e.code === 'Space') flap();
+});
+
+// Intro Screen Logic
+const intro = document.getElementById('intro');
+const gameTitle = document.getElementById('gameTitle');
+const playButton = document.getElementById('playButton');
+
+setTimeout(() => {
+  intro.querySelector('h1').style.display = 'none';
+  gameTitle.style.display = 'block';
+  playButton.style.display = 'inline-block';
+}, 2000);
+
+playButton.onclick = () => {
+  intro.style.display = 'none';
+  canvas.style.display = 'block';
+  gameRunning = true;
+  updateGame();
+};
