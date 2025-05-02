@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flappy Dabloons</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div id="intro">
-    <h1>GAMERABLE studios presents to you...</h1>
-    <h2 id="gameTitle" style="display: none;">Flappy Dabloons</h2>
-    <button id="playButton" style="display: none;">Play</button>
+<div id="shop" style="display: none;">
+  <h3>Welcome to the Dabloon Shop!</h3>
+  <p>You have <span id="dabloonCount">50</span> Dabloons</p>
+  <div id="skins">
+    <div class="item">
+      <p><strong>Golden Bird</strong><br><em>Shiny and rare.</em></p>
+      <button onclick="buySkin('gold')">Buy - 20 Dabloons</button>
+    </div>
+    <div class="item">
+      <p><strong>Doge Flyer</strong><br><em>It’s a bird, it’s a plane… no, it’s a Doge?!</em></p>
+      <button onclick="buySkin('doge')">Buy - 30 Dabloons</button>
+    </div>
+    <div class="item">
+      <p><strong>Troll Bird</strong><br><em>Do not trust this bird.</em></p>
+      <button onclick="buySkin('troll')">Buy - 25 Dabloons</button>
+    </div>
   </div>
-  <canvas id="gameCanvas"></canvas>
-  <div id="shop" style="display: none;">
-    <h3>Welcome to the Shop!</h3>
-    <p>Come back later for more!</p>
-    <button onclick="restartGame()">Replay</button>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+  <button onclick="restartGame()">Replay</button>
+</div>

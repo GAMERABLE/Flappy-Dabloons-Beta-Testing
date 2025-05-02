@@ -1,29 +1,13 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  text-align: center;
-  background-color: #87ceeb;
+#skins {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px auto;
+  max-width: 300px;
 }
 
-#gameCanvas {
-  display: none;
-  background-color: #87ceeb;
-  width: 100vw;
-  height: 100vh;
-}
-
-#intro {
-  margin-top: 20%;
-}
-
-#shop {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+.item {
+  background: #eee;
+  padding: 10px;
+  border-radius: 8px;
 }
