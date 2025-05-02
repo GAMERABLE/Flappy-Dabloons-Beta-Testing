@@ -1,31 +1,21 @@
+
 body {
-  text-align: center;
-  font-family: sans-serif;
-  background-color: #87CEEB;
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background-color: #70c5ce;
+    font-family: sans-serif;
+    text-align: center;
 }
 
 #intro {
-  margin-top: 100px;
+    position: absolute;
+    width: 100%;
+    top: 30%;
+    color: white;
 }
 
-canvas {
-  background: #87CEEB;
-  display: block;
-  margin: 0 auto;
-}
-
-#skins {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 10px auto;
-  max-width: 300px;
-}
-
-.item {
-  background: #eee;
-  padding: 10px;
-  border-radius: 8px;
+#gameCanvas {
+    display: none;
+    background: url('background.png') no-repeat center center;
+    background-size: cover;
 }

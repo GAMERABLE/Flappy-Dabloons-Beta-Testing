@@ -1,102 +1,63 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
 
-let bird = { x: 50, y: 200, width: 20, height: 20, velocity: 0 };
-let pipes = [];
-let gravity = 0.5;
-let gameRunning = false;
-let dabloons = 50;
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const playBtn = document.getElementById('playBtn');
+const intro = document.getElementById('intro');
+const gameTitle = document.getElementById('gameTitle');
 
-function drawBird() {
-  ctx.fillStyle = "gold";
-  ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
-}
+let bird = new Image();
+bird.src = 'bird.png';
 
-function drawPipes() {
-  ctx.fillStyle = "green";
-  for (let pipe of pipes) {
-    ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
-    ctx.fillRect(pipe.x, canvas.height - pipe.bottom, pipe.width, pipe.bottom);
-  }
-}
+let pipeTop = new Image();
+pipeTop.src = 'pipeTop.png';
 
-function updateGame() {
-  if (!gameRunning) return;
+let pipeBottom = new Image();
+pipeBottom.src = 'pipeBottom.png';
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  bird.velocity += gravity;
-  bird.y += bird.velocity;
-
-  if (bird.y + bird.height > canvas.height || bird.y < 0) {
-    endGame();
-    return;
-  }
-
-  for (let pipe of pipes) {
-    pipe.x -= 2;
-    if (bird.x < pipe.x + pipe.width &&
-        bird.x + bird.width > pipe.x &&
-        (bird.y < pipe.top || bird.y + bird.height > canvas.height - pipe.bottom)) {
-      endGame();
-      return;
-    }
-  }
-
-  if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-    pipes.push({
-      x: canvas.width,
-      width: 50,
-      top: Math.random() * 200 + 50,
-      bottom: Math.random() * 200 + 50
-    });
-  }
-
-  drawPipes();
-  drawBird();
-  requestAnimationFrame(updateGame);
-}
-
-function flap() {
-  if (gameRunning) bird.velocity = -8;
-}
-
-document.addEventListener("keydown", flap);
-document.addEventListener("touchstart", flap);
+let pipes = [{ x: 400, y: -100 }];
+let birdY = 150;
+let gravity = 2;
+let flap = -30;
+let velocity = 0;
+let isGameRunning = false;
 
 function startGame() {
-  document.getElementById("intro").style.display = "none";
-  canvas.style.display = "block";
-  bird.y = 200;
-  bird.velocity = 0;
-  pipes = [];
-  gameRunning = true;
-  updateGame();
+    canvas.style.display = 'block';
+    intro.style.display = 'none';
+    isGameRunning = true;
+    requestAnimationFrame(draw);
 }
 
-function endGame() {
-  gameRunning = false;
-  canvas.style.display = "none";
-  document.getElementById("shop").style.display = "block";
-  document.getElementById("dabloonCount").textContent = dabloons;
+playBtn.onclick = startGame;
+
+function draw() {
+    if (!isGameRunning) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let pipe of pipes) {
+        pipe.x -= 2;
+        if (pipe.x + 50 < 0) pipe.x = 400, pipe.y = Math.random() * -150;
+        ctx.drawImage(pipeTop, pipe.x, pipe.y);
+        ctx.drawImage(pipeBottom, pipe.x, pipe.y + 320);
+    }
+
+    velocity += gravity;
+    birdY += velocity;
+    ctx.drawImage(bird, 80, birdY);
+
+    if (birdY + bird.height > canvas.height || birdY < 0) {
+        isGameRunning = false;
+        alert("Game Over");
+        location.reload();
+    }
+
+    requestAnimationFrame(draw);
 }
 
-function buySkin(skin) {
-  const prices = { gold: 20, doge: 30 };
-  if (dabloons >= prices[skin]) {
-    dabloons -= prices[skin];
-    alert(`You bought the ${skin} skin!`);
-    document.getElementById('dabloonCount').textContent = dabloons;
-  } else {
-    alert("Not enough Dabloons!");
-  }
-}
+document.addEventListener('keydown', () => velocity = flap);
 
-function restartGame() {
-  document.getElementById("shop").style.display = "none";
-  canvas.style.display = "block";
-  bird.y = 200;
-  bird.velocity = 0;
-  pipes = [];
-  gameRunning = true;
-  updateGame();
-}
+setTimeout(() => {
+    gameTitle.style.display = 'block';
+    playBtn.style.display = 'inline-block';
+}, 1500);
