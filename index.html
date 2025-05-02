@@ -1,19 +1,33 @@
-<div id="shop" style="display: none;">
-  <h3>Welcome to the Dabloon Shop!</h3>
-  <p>You have <span id="dabloonCount">50</span> Dabloons</p>
-  <div id="skins">
-    <div class="item">
-      <p><strong>Golden Bird</strong><br><em>Shiny and rare.</em></p>
-      <button onclick="buySkin('gold')">Buy - 20 Dabloons</button>
-    </div>
-    <div class="item">
-      <p><strong>Doge Flyer</strong><br><em>It’s a bird, it’s a plane… no, it’s a Doge?!</em></p>
-      <button onclick="buySkin('doge')">Buy - 30 Dabloons</button>
-    </div>
-    <div class="item">
-      <p><strong>Troll Bird</strong><br><em>Do not trust this bird.</em></p>
-      <button onclick="buySkin('troll')">Buy - 25 Dabloons</button>
-    </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flappy Dabloons</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="intro">
+    <h1>GAMERABLE Studios presents to you...</h1>
+    <h2>Flappy Dabloons</h2>
+    <button onclick="startGame()">Play</button>
   </div>
-  <button onclick="restartGame()">Replay</button>
-</div>
+  <canvas id="gameCanvas" width="400" height="600" style="display:none;"></canvas>
+
+  <div id="shop" style="display:none;">
+    <h3>Welcome to the Dabloon Shop!</h3>
+    <p>You have <span id="dabloonCount">50</span> Dabloons</p>
+    <div id="skins">
+      <div class="item">
+        <p><strong>Golden Bird</strong><br><em>Shiny and rare.</em></p>
+        <button onclick="buySkin('gold')">Buy - 20 Dabloons</button>
+      </div>
+      <div class="item">
+        <p><strong>Doge Flyer</strong><br><em>It’s a bird, it’s a plane… no, it’s a Doge?!</em></p>
+        <button onclick="buySkin('doge')">Buy - 30 Dabloons</button>
+      </div>
+    </div>
+    <button onclick="restartGame()">Replay</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
