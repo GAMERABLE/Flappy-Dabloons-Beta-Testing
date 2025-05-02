@@ -1,45 +1,51 @@
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-const birdImg = new Image();
-birdImg.src = "images/bird.png";
+let birdY = canvas.height / 2;
+let birdVelocity = 0;
+const gravity = 0.5;
+const jump = -10;
+let gameStarted = false;
 
-const pipeImg = new Image();
-pipeImg.src = "images/pipe.png";
-
-const bgImg = new Image();
-bgImg.src = "images/background.png";
-
-let birdY = 250;
-let velocity = 0;
-let gravity = 0.6;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-  ctx.drawImage(birdImg, canvas.width * 0.28, birdY, 40, 40);
-  ctx.drawImage(pipeImg, canvas.width * 0.8, canvas.height * 0.6, 50, canvas.height * 0.4);
-}
-
-function update() {
-  velocity += gravity;
-  birdY += velocity;
-
-  draw();
-  requestAnimationFrame(update);
-}
-
-canvas.addEventListener("click", () => {
-  velocity = -8;
+document.getElementById("playButton").addEventListener("click", () => {
+    document.getElementById("intro").style.display = "none";
+    canvas.style.display = "block";
+    gameStarted = true;
+    requestAnimationFrame(gameLoop);
 });
 
-birdImg.onload = () => {
-  update();
-};
+window.addEventListener("touchstart", () => {
+    if (gameStarted) birdVelocity = jump;
+});
+
+window.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && gameStarted) birdVelocity = jump;
+});
+
+function drawBird() {
+    ctx.fillStyle = "gold";
+    ctx.beginPath();
+    ctx.arc(60, birdY, 20, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function gameLoop() {
+    if (!gameStarted) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    birdVelocity += gravity;
+    birdY += birdVelocity;
+
+    drawBird();
+
+    if (birdY > canvas.height || birdY < 0) {
+        gameStarted = false;
+        alert("Game Over");
+        location.reload();
+    } else {
+        requestAnimationFrame(gameLoop);
+    }
+}

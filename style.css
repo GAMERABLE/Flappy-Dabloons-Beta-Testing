@@ -1,8 +1,25 @@
+
 body {
-  margin: 0;
-  overflow: hidden;
+    margin: 0;
+    overflow: hidden;
+    font-family: sans-serif;
+    text-align: center;
+    background-color: #87CEEB;
 }
+
+#intro {
+    position: absolute;
+    width: 100%;
+    top: 30%;
+}
+
+#playButton {
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
 canvas {
-  display: block;
-  background-color: skyblue;
+    display: none;
+    background-color: #87CEEB;
 }
