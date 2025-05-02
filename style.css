@@ -1,25 +1,23 @@
-
 body {
-    margin: 0;
-    overflow: hidden;
-    font-family: sans-serif;
-    text-align: center;
-    background-color: #87CEEB;
-}
-
-#intro {
-    position: absolute;
-    width: 100%;
-    top: 30%;
-}
-
-#playButton {
-    padding: 10px 20px;
-    font-size: 20px;
-    cursor: pointer;
+  margin: 0;
+  font-family: sans-serif;
+  background-color: #87CEEB;
+  overflow: hidden;
+  text-align: center;
 }
 
 canvas {
-    display: none;
-    background-color: #87CEEB;
+  display: none;
+  background-color: #87CEEB;
+}
+
+#start-screen, #shop {
+  position: absolute;
+  width: 100%;
+  top: 30%;
+  color: black;
+}
+
+.hidden {
+  display: none;
 }

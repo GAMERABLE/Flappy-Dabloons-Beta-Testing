@@ -1,51 +1,115 @@
+let canvas, ctx;
+let bird, pipes = [], gravity = 0.5, lift = -10, pipeSpeed = 2;
+let score = 0, gameOver = false;
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function startGame() {
+  document.getElementById("start-screen").classList.add("hidden");
+  canvas = document.getElementById("gameCanvas");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx = canvas.getContext("2d");
+  canvas.style.display = "block";
 
-let birdY = canvas.height / 2;
-let birdVelocity = 0;
-const gravity = 0.5;
-const jump = -10;
-let gameStarted = false;
+  bird = {
+    x: 80,
+    y: canvas.height / 2,
+    radius: 20,
+    velocity: 0
+  };
 
-document.getElementById("playButton").addEventListener("click", () => {
-    document.getElementById("intro").style.display = "none";
-    canvas.style.display = "block";
-    gameStarted = true;
-    requestAnimationFrame(gameLoop);
-});
+  pipes = [];
+  score = 0;
+  gameOver = false;
 
-window.addEventListener("touchstart", () => {
-    if (gameStarted) birdVelocity = jump;
-});
+  for (let i = 0; i < 3; i++) {
+    addPipe(i * 300 + 400);
+  }
 
-window.addEventListener("keydown", (e) => {
-    if (e.code === "Space" && gameStarted) birdVelocity = jump;
-});
+  window.addEventListener("touchstart", flap);
+  window.addEventListener("keydown", e => { if (e.code === "Space") flap(); });
 
-function drawBird() {
-    ctx.fillStyle = "gold";
-    ctx.beginPath();
-    ctx.arc(60, birdY, 20, 0, Math.PI * 2);
-    ctx.fill();
+  loop();
 }
 
-function gameLoop() {
-    if (!gameStarted) return;
+function flap() {
+  if (!gameOver) bird.velocity = lift;
+}
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    birdVelocity += gravity;
-    birdY += birdVelocity;
+function addPipe(x) {
+  let gap = 200;
+  let topHeight = Math.random() * (canvas.height - gap - 100) + 50;
+  pipes.push({ x, top: topHeight, bottom: topHeight + gap });
+}
 
-    drawBird();
+function loop() {
+  if (gameOver) return;
 
-    if (birdY > canvas.height || birdY < 0) {
-        gameStarted = false;
-        alert("Game Over");
-        location.reload();
-    } else {
-        requestAnimationFrame(gameLoop);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Bird physics
+  bird.velocity += gravity;
+  bird.y += bird.velocity;
+
+  // Draw bird
+  ctx.beginPath();
+  ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+  ctx.fillStyle = "gold";
+  ctx.fill();
+
+  // Draw and move pipes
+  for (let i = 0; i < pipes.length; i++) {
+    let p = pipes[i];
+    p.x -= pipeSpeed;
+
+    ctx.fillStyle = "green";
+    ctx.fillRect(p.x, 0, 60, p.top);
+    ctx.fillRect(p.x, p.bottom, 60, canvas.height - p.bottom);
+
+    // Collision
+    if (
+      bird.x + bird.radius > p.x &&
+      bird.x - bird.radius < p.x + 60 &&
+      (bird.y - bird.radius < p.top || bird.y + bird.radius > p.bottom)
+    ) {
+      endGame();
+      return;
     }
+
+    // Score
+    if (p.x + 60 < bird.x && !p.scored) {
+      score += 5;
+      p.scored = true;
+    }
+
+    // Recycle pipes
+    if (p.x < -60) {
+      pipes.splice(i, 1);
+      addPipe(canvas.width);
+    }
+  }
+
+  // Bird hits top/bottom
+  if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) {
+    endGame();
+    return;
+  }
+
+  // Score
+  ctx.fillStyle = "black";
+  ctx.font = "24px Arial";
+  ctx.fillText(`Dabloons: ${score}`, 20, 40);
+
+  requestAnimationFrame(loop);
+}
+
+function endGame() {
+  gameOver = true;
+  canvas.style.display = "none";
+  document.getElementById("shop").classList.remove("hidden");
+  document.getElementById("scoreDisplay").textContent = score;
+}
+
+function restartGame() {
+  document.getElementById("shop").classList.add("hidden");
+  startGame();
 }
