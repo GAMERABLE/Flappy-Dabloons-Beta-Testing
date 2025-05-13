@@ -1,84 +1,119 @@
-let canvas = document.getElementById("gameCanvas");
-let ctx = canvas.getContext("2d");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+let bird, pipes = [], dabloons = 0;
+let gravity = 0.3, flapStrength = -6, gameRunning = false;
 
-let birdY = 250;
-let velocity = 0;
-let gravity = 0.4;
-let flapPower = -7;
-let dabloons = 0;
-let playing = false;
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+document.getElementById("playButton").onclick = () => {
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("gameCanvas").style.display = "block";
+  startGame();
+};
+
+function startGame() {
+  gameRunning = true;
+  bird = { x: 80, y: canvas.height / 2, vy: 0 };
+  pipes = [];
+  dabloons = 10;
+  document.getElementById("currencyDisplay").innerText = dabloons;
+  setInterval(spawnPipe, 2000);
+  requestAnimationFrame(gameLoop);
+}
 
 function flap() {
-  velocity = flapPower;
+  if (!gameRunning) return;
+  bird.vy = flapStrength;
+}
+document.addEventListener("touchstart", flap);
+document.addEventListener("keydown", e => {
+  if (e.code === "Space") flap();
+});
+
+function spawnPipe() {
+  if (!gameRunning) return;
+  let gap = 150;
+  let topHeight = Math.random() * (canvas.height - gap - 200);
+  pipes.push({ x: canvas.width, top: topHeight, bottom: topHeight + gap });
+}
+
+function drawBird() {
+  ctx.fillStyle = "gold";
+  ctx.beginPath();
+  ctx.arc(bird.x, bird.y, 20, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawPipes() {
+  ctx.fillStyle = "green";
+  pipes.forEach(pipe => {
+    ctx.fillRect(pipe.x, 0, 60, pipe.top);
+    ctx.fillRect(pipe.x, pipe.bottom, 60, canvas.height - pipe.bottom);
+  });
 }
 
 function updateGame() {
-  if (!playing) return;
+  bird.vy += gravity;
+  bird.y += bird.vy;
+
+  pipes.forEach(pipe => {
+    pipe.x -= 2;
+
+    // Scoring
+    if (pipe.x + 60 < bird.x && !pipe.scored) {
+      dabloons += 5;
+      pipe.scored = true;
+      document.getElementById("currencyDisplay").innerText = dabloons;
+    }
+
+    // Collision
+    if (
+      bird.x + 20 > pipe.x && bird.x - 20 < pipe.x + 60 &&
+      (bird.y - 20 < pipe.top || bird.y + 20 > pipe.bottom)
+    ) {
+      endGame();
+    }
+  });
+
+  if (bird.y + 20 > canvas.height || bird.y - 20 < 0) endGame();
+}
+
+function drawGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  velocity += gravity;
-  birdY += velocity;
-
-  ctx.fillStyle = "gold";
-  ctx.beginPath();
-  ctx.arc(100, birdY, 20, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Check if out of bounds
-  if (birdY > canvas.height || birdY < 0) {
-    gameOver();
-  }
-
-  requestAnimationFrame(updateGame);
+  drawBird();
+  drawPipes();
 }
 
-function gameOver() {
-  playing = false;
-  alert("Game Over! You earned " + dabloons + " dabloons!");
-  document.getElementById("menu").style.display = "block";
-  canvas.style.display = "none";
-}
-
-function startGame() {
-  birdY = 250;
-  velocity = 0;
-  dabloons += 10;
-  updateDabloons();
-  playing = true;
-  canvas.style.display = "block";
-  document.getElementById("menu").style.display = "none";
+function gameLoop() {
+  if (!gameRunning) return;
   updateGame();
+  drawGame();
+  requestAnimationFrame(gameLoop);
 }
 
-function showShop() {
+function endGame() {
+  gameRunning = false;
   document.getElementById("shop").style.display = "block";
 }
 
-function closeShop() {
-  document.getElementById("shop").style.display = "none";
-}
-
-function buyItem() {
-  if (dabloons >= 100) {
-    alert("You bought Golden Wings!");
-    dabloons -= 100;
-    updateDabloons();
+function buyItem(cost) {
+  if (dabloons >= cost) {
+    dabloons -= cost;
+    document.getElementById("currencyDisplay").innerText = dabloons;
+    alert("Purchase successful!");
   } else {
     alert("Not enough dabloons!");
   }
 }
 
-function updateDabloons() {
-  document.getElementById("dabloons").textContent = dabloons;
+function closeShop() {
+  document.getElementById("shop").style.display = "none";
+  document.getElementById("intro").style.display = "block";
+  document.getElementById("gameTitle").style.display = "block";
+  document.getElementById("playButton").style.display = "block";
 }
-
-setTimeout(() => {
-  document.getElementById("intro").style.display = "none";
-  document.getElementById("menu").style.display = "block";
-}, 3000);
-
-document.getElementById("playBtn").onclick = startGame;
-document.getElementById("shopBtn").onclick = showShop;
-window.addEventListener("touchstart", flap);
-window.addEventListener("keydown", (e) => {
-  if (e.code === "Space") flap();
-});

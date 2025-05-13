@@ -8,23 +8,19 @@
 </head>
 <body>
   <div id="intro">
-    <h1>GAMERABLE Studios presents...</h1>
+    <h1>GAMERABLE studios presents</h1>
+    <h2 id="gameTitle" style="display:none;">Flappy Dabloons</h2>
+    <button id="playButton" style="display:none;">Play</button>
   </div>
 
-  <div id="menu">
-    <h2>Flappy Dabloons</h2>
-    <button id="playBtn">Play</button>
-    <button id="shopBtn">Shop</button>
-  </div>
+  <canvas id="gameCanvas" style="display:none;"></canvas>
 
-  <canvas id="gameCanvas" width="400" height="600"></canvas>
-
-  <div id="shop">
-    <h2>Welcome to the Shop!</h2>
-    <p>You have <span id="dabloons">0</span> dabloons</p>
-    <p>Item: Golden Wings - 100 Dabloons</p>
-    <button onclick="buyItem()">Buy</button>
-    <button onclick="closeShop()">Close</button>
+  <div id="shop" style="display:none;">
+    <h2>Shop</h2>
+    <p>Dabloons: <span id="currencyDisplay">0</span></p>
+    <button onclick="buyItem(10)">Buy Cosmetic (10)</button>
+    <button onclick="buyItem(20)">Buy Power-Up (20)</button>
+    <button onclick="closeShop()">Close Shop</button>
   </div>
 
   <script src="game.js"></script>

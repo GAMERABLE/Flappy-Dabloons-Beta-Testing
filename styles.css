@@ -1,35 +1,50 @@
 body {
   margin: 0;
+  overflow: hidden;
+  background: lightblue;
   font-family: sans-serif;
-  background: #88ccff;
   text-align: center;
 }
 
 #intro {
-  padding: 50px;
-  font-size: 24px;
-  background: #000;
-  color: #fff;
+  position: absolute;
+  top: 40%;
+  left: 0;
+  right: 0;
+  color: white;
+  font-size: 2em;
+  animation: fadeIntro 2s forwards;
 }
 
-#menu {
-  display: none;
-  margin-top: 50px;
+@keyframes fadeIntro {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; display: none; }
+}
+
+#playButton {
+  font-size: 1.5em;
+  margin-top: 20px;
+  padding: 10px 30px;
+  background: gold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#gameCanvas {
+  background-image: url('https://i.imgur.com/CeBgT6K.png'); /* Meme background */
+  background-size: cover;
+  display: block;
+  margin: 0 auto;
 }
 
 #shop {
-  display: none;
-  background: #fff;
-  padding: 20px;
   position: absolute;
-  top: 20%;
-  left: 10%;
-  width: 80%;
-  border: 2px solid #000;
-}
-
-canvas {
-  display: none;
-  background: #a0d8f1;
-  border: 2px solid #000;
+  top: 10%;
+  left: 25%;
+  width: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
 }
