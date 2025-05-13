@@ -64,14 +64,12 @@ function updateGame() {
   pipes.forEach(pipe => {
     pipe.x -= 2;
 
-    // Scoring
     if (pipe.x + 60 < bird.x && !pipe.scored) {
       dabloons += 5;
       pipe.scored = true;
       document.getElementById("currencyDisplay").innerText = dabloons;
     }
 
-    // Collision
     if (
       bird.x + 20 > pipe.x && bird.x - 20 < pipe.x + 60 &&
       (bird.y - 20 < pipe.top || bird.y + 20 > pipe.bottom)

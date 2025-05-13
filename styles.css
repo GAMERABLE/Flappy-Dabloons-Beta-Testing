@@ -33,7 +33,7 @@ body {
 }
 
 #gameCanvas {
-  background-image: url('https://i.imgur.com/CeBgT6K.png'); /* Meme background */
+  background-image: url('https://i.imgur.com/CeBgT6K.png');
   background-size: cover;
   display: block;
   margin: 0 auto;
