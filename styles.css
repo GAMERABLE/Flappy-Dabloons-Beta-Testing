@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #87CEEB;
+}
+
+#gameCanvas {
+    display: block;
+    background: url('background.png') no-repeat center center;
+    background-size: cover;
+}
