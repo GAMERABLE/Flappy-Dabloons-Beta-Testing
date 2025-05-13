@@ -2,161 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flappy Dabloons</title>
-  <style>
-    html, body {
-      margin: 0;
-      overflow: hidden;
-      font-family: sans-serif;
-    }
-    canvas {
-      background: skyblue;
-      display: block;
-    }
-    #playButton, #shopButton {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 10px 20px;
-      font-size: 18px;
-      cursor: pointer;
-      border: none;
-      border-radius: 10px;
-    }
-    #playButton {
-      top: 60%;
-      background: gold;
-    }
-    #shopButton {
-      top: 10px;
-      background: limegreen;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <canvas id="gameCanvas"></canvas>
-  <button id="playButton">Play</button>
-  <button id="shopButton" style="display:none;">Shop</button>
-  <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+  <div id="intro">
+    <h1>GAMERABLE Studios presents...</h1>
+  </div>
 
-    let bird = { x: 100, y: canvas.height/2, size: 30, velocity: 0 };
-    let gravity = 0.5;
-    let flapPower = -10;
-    let pipes = [];
-    let pipeGap = 160;
-    let pipeWidth = 60;
-    let pipeSpacing = 250;
-    let frame = 0;
-    let gameStarted = false;
-    let dabloons = 0;
+  <div id="menu">
+    <h2>Flappy Dabloons</h2>
+    <button id="playBtn">Play</button>
+    <button id="shopBtn">Shop</button>
+  </div>
 
-    document.getElementById("playButton").onclick = () => {
-      gameStarted = true;
-      pipes = [];
-      bird.y = canvas.height / 2;
-      bird.velocity = 0;
-      dabloons = 0;
-      document.getElementById("playButton").style.display = "none";
-      document.getElementById("shopButton").style.display = "block";
-    };
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
 
-    document.getElementById("shopButton").onclick = () => {
-      alert("Welcome to the shop! (Coming soon)");
-    };
+  <div id="shop">
+    <h2>Welcome to the Shop!</h2>
+    <p>You have <span id="dabloons">0</span> dabloons</p>
+    <p>Item: Golden Wings - 100 Dabloons</p>
+    <button onclick="buyItem()">Buy</button>
+    <button onclick="closeShop()">Close</button>
+  </div>
 
-    window.addEventListener("touchstart", () => {
-      if (gameStarted) bird.velocity = flapPower;
-    });
-
-    window.addEventListener("keydown", e => {
-      if (e.code === "Space" && gameStarted) bird.velocity = flapPower;
-    });
-
-    function drawBird() {
-      ctx.fillStyle = "gold";
-      ctx.beginPath();
-      ctx.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawPipes() {
-      pipes.forEach(pipe => {
-        ctx.fillStyle = "green";
-        ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
-        ctx.fillRect(pipe.x, pipe.top + pipeGap, pipeWidth, canvas.height);
-      });
-    }
-
-    function drawText() {
-      ctx.fillStyle = "black";
-      ctx.font = "24px Arial";
-      ctx.fillText(`Dabloons: ${dabloons}`, 20, 40);
-    }
-
-    function updateGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (!gameStarted) {
-        ctx.fillStyle = "white";
-        ctx.font = "40px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("GAMERABLE studios presents", canvas.width/2, canvas.height/3);
-        return;
-      }
-
-      bird.velocity += gravity;
-      bird.y += bird.velocity;
-
-      // Add pipes
-      if (frame % pipeSpacing === 0) {
-        let topHeight = Math.random() * (canvas.height - pipeGap - 100) + 50;
-        pipes.push({ x: canvas.width, top: topHeight });
-      }
-
-      // Move and remove pipes
-      pipes.forEach(pipe => pipe.x -= 3);
-      if (pipes.length && pipes[0].x + pipeWidth < 0) {
-        pipes.shift();
-        dabloons += 5;
-      }
-
-      // Collision
-      for (let pipe of pipes) {
-        if (
-          bird.x + bird.size > pipe.x &&
-          bird.x - bird.size < pipe.x + pipeWidth &&
-          (bird.y - bird.size < pipe.top || bird.y + bird.size > pipe.top + pipeGap)
-        ) {
-          resetGame();
-          return;
-        }
-      }
-
-      // Ground or ceiling
-      if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) {
-        resetGame();
-        return;
-      }
-
-      drawPipes();
-      drawBird();
-      drawText();
-      frame++;
-      requestAnimationFrame(updateGame);
-    }
-
-    function resetGame() {
-      alert("Game Over!");
-      document.getElementById("playButton").style.display = "block";
-      document.getElementById("shopButton").style.display = "none";
-      gameStarted = false;
-    }
-
-    updateGame();
-  </script>
+  <script src="game.js"></script>
 </body>
 </html>
