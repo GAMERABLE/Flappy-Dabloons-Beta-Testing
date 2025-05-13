@@ -8,21 +8,11 @@
 </head>
 <body>
   <div id="intro">
-    <h1>GAMERABLE studios presents</h1>
-    <h2 id="gameTitle" style="display:none;">Flappy Dabloons</h2>
-    <button id="playButton" style="display:none;">Play</button>
+    <h1>GAMERABLE Studios presents to you</h1>
+    <h2 id="gameTitle" class="hidden">Flappy Dabloons</h2>
+    <button id="playButton" class="hidden">Play</button>
   </div>
-
-  <canvas id="gameCanvas" style="display:none;"></canvas>
-
-  <div id="shop" style="display:none;">
-    <h2>Shop</h2>
-    <p>Dabloons: <span id="currencyDisplay">0</span></p>
-    <button onclick="buyItem(10)">Buy Cosmetic (10)</button>
-    <button onclick="buyItem(20)">Buy Power-Up (20)</button>
-    <button onclick="closeShop()">Close Shop</button>
-  </div>
-
+  <canvas id="gameCanvas" class="hidden"></canvas>
   <script src="game.js"></script>
 </body>
 </html>
