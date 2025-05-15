@@ -1,33 +1,31 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let birdY = 150;
-let birdVelocity = 0;
-const gravity = 0.5;
-const flapStrength = -8;
-const birdSize = 20;
-let pipes = [];
-const pipeWidth = 60;
-const pipeGap = 120;
-let frame = 0;
-let gameStarted = false;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-function startGame() {
-  document.getElementById('intro').classList.add('hidden');
-  canvas.classList.remove('hidden');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+let bird = { x: 60, y: 150, width: 30, height: 30, velocity: 0 };
+let gravity = 0.5;
+let jump = -10;
+let pipes = [];
+let pipeGap = 150;
+let pipeWidth = 60;
+let frame = 0;
+let dabloons = 0;
+let playing = false;
+
+function resetGame() {
+  bird.y = 150;
+  bird.velocity = 0;
   pipes = [];
-  birdY = canvas.height / 2;
-  birdVelocity = 0;
   frame = 0;
-  gameStarted = true;
-  animate();
+  dabloons = 0;
+  document.getElementById('dabloonsCount').textContent = dabloons;
 }
 
 function drawBird() {
   ctx.fillStyle = 'gold';
   ctx.beginPath();
-  ctx.arc(60, birdY, birdSize, 0, Math.PI * 2);
+  ctx.arc(bird.x, bird.y, bird.width / 2, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -39,59 +37,104 @@ function drawPipes() {
   });
 }
 
-function updatePipes() {
-  if (frame % 90 === 0) {
-    const topHeight = Math.random() * (canvas.height - pipeGap - 100) + 50;
-    pipes.push({ x: canvas.width, top: topHeight });
-  }
-  pipes.forEach(pipe => pipe.x -= 3);
-  pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
-}
+function update() {
+  if (!playing) return;
+  
+  bird.velocity += gravity;
+  bird.y += bird.velocity;
 
-function checkCollision() {
+  // Spawn pipes
+  if (frame % 100 === 0) {
+    let top = Math.random() * (canvas.height - pipeGap - 200) + 50;
+    pipes.push({ x: canvas.width, top });
+  }
+
+  pipes.forEach(pipe => pipe.x -= 3);
+
+  // Collision
   for (let pipe of pipes) {
     if (
-      60 + birdSize > pipe.x &&
-      60 - birdSize < pipe.x + pipeWidth &&
-      (birdY - birdSize < pipe.top || birdY + birdSize > pipe.top + pipeGap)
+      bird.x + bird.width / 2 > pipe.x &&
+      bird.x - bird.width / 2 < pipe.x + pipeWidth &&
+      (bird.y - bird.height / 2 < pipe.top ||
+       bird.y + bird.height / 2 > pipe.top + pipeGap)
     ) {
-      gameOver();
+      endGame();
+    }
+
+    // Dabloons earn
+    if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
+      dabloons += 5;
+      pipe.passed = true;
+      document.getElementById('dabloonsCount').textContent = dabloons;
     }
   }
-  if (birdY + birdSize > canvas.height || birdY - birdSize < 0) {
-    gameOver();
+
+  // Floor/ceiling
+  if (bird.y + bird.height / 2 > canvas.height || bird.y - bird.height / 2 < 0) {
+    endGame();
   }
-}
 
-function gameOver() {
-  gameStarted = false;
-  alert('Game Over!');
-  location.reload();
-}
-
-function animate() {
-  if (!gameStarted) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   frame++;
-  birdVelocity += gravity;
-  birdY += birdVelocity;
-  drawBird();
-  updatePipes();
-  drawPipes();
-  checkCollision();
-  requestAnimationFrame(animate);
 }
 
-document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' && gameStarted) {
-    birdVelocity = flapStrength;
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBird();
+  drawPipes();
+}
+
+function loop() {
+  if (playing) {
+    update();
+    draw();
   }
+  requestAnimationFrame(loop);
+}
+
+function flap() {
+  if (!playing) return;
+  bird.velocity = jump;
+}
+
+function startGame() {
+  document.getElementById('intro').style.display = 'none';
+  canvas.style.display = 'block';
+  playing = true;
+  resetGame();
+}
+
+function endGame() {
+  playing = false;
+  alert("Game Over! You earned " + dabloons + " dabloons.");
+  document.getElementById('shop').classList.remove('hidden');
+}
+
+function buyItem() {
+  if (dabloons >= 20) {
+    dabloons -= 20;
+    alert('You bought a funny hat!');
+  } else {
+    alert('Not enough dabloons!');
+  }
+  document.getElementById('dabloonsCount').textContent = dabloons;
+}
+
+function closeShop() {
+  document.getElementById('shop').classList.add('hidden');
+  startGame();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') flap();
 });
 
-document.getElementById('playButton').addEventListener('click', startGame);
+document.getElementById('playButton').addEventListener('click', () => {
+  document.getElementById('gameTitle').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('gameTitle').style.display = 'none';
+    startGame();
+  }, 2000);
+});
 
-// Intro sequence
-setTimeout(() => {
-  document.getElementById('gameTitle').classList.remove('hidden');
-  document.getElementById('playButton').classList.remove('hidden');
-}, 2000);
+loop();

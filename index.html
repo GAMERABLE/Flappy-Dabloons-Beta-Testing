@@ -4,15 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flappy Dabloons</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="intro">
-    <h1>GAMERABLE Studios presents to you</h1>
-    <h2 id="gameTitle" class="hidden">Flappy Dabloons</h2>
-    <button id="playButton" class="hidden">Play</button>
+    <h1>GAMERABLE studios presents to you...</h1>
+    <h2 id="gameTitle">Flappy Dabloons</h2>
+    <button id="playButton">PLAY</button>
   </div>
-  <canvas id="gameCanvas" class="hidden"></canvas>
+  <canvas id="gameCanvas"></canvas>
+  <div id="shop" class="hidden">
+    <h3>Shop</h3>
+    <p>Dabloons: <span id="dabloonsCount">0</span></p>
+    <button onclick="buyItem()">Buy Funny Hat - 20 dabloons</button>
+    <button onclick="closeShop()">Close</button>
+  </div>
   <script src="game.js"></script>
 </body>
 </html>
