@@ -3,18 +3,18 @@ const ctx = canvas.getContext('2d');
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-let bird = { x: 60, y: 150, width: 30, height: 30, velocity: 0 };
+let bird = { x: 60, y: canvas.height / 2, width: 30, height: 30, velocity: 0 };
 let gravity = 0.5;
 let jump = -10;
 let pipes = [];
-let pipeGap = 150;
+let pipeGap = 180;
 let pipeWidth = 60;
 let frame = 0;
 let dabloons = 0;
 let playing = false;
 
 function resetGame() {
-  bird.y = 150;
+  bird.y = canvas.height / 2;
   bird.velocity = 0;
   pipes = [];
   frame = 0;
@@ -39,30 +39,35 @@ function drawPipes() {
 
 function update() {
   if (!playing) return;
-  
+
   bird.velocity += gravity;
   bird.y += bird.velocity;
 
-  // Spawn pipes
+  // Pipe spawning
   if (frame % 100 === 0) {
-    let top = Math.random() * (canvas.height - pipeGap - 200) + 50;
-    pipes.push({ x: canvas.width, top });
+    let minTop = 50;
+    let maxTop = canvas.height - pipeGap - 150;
+    let top = Math.floor(Math.random() * (maxTop - minTop + 1)) + minTop;
+    pipes.push({ x: canvas.width, top, passed: false });
   }
 
-  pipes.forEach(pipe => pipe.x -= 3);
+  pipes.forEach(pipe => (pipe.x -= 3));
 
-  // Collision
+  // Remove off-screen pipes
+  pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
+
+  // Collision detection
   for (let pipe of pipes) {
     if (
       bird.x + bird.width / 2 > pipe.x &&
       bird.x - bird.width / 2 < pipe.x + pipeWidth &&
       (bird.y - bird.height / 2 < pipe.top ||
-       bird.y + bird.height / 2 > pipe.top + pipeGap)
+        bird.y + bird.height / 2 > pipe.top + pipeGap)
     ) {
       endGame();
     }
 
-    // Dabloons earn
+    // Earn dabloons
     if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
       dabloons += 5;
       pipe.passed = true;
@@ -70,8 +75,10 @@ function update() {
     }
   }
 
-  // Floor/ceiling
-  if (bird.y + bird.height / 2 > canvas.height || bird.y - bird.height / 2 < 0) {
+  if (
+    bird.y + bird.height / 2 > canvas.height ||
+    bird.y - bird.height / 2 < 0
+  ) {
     endGame();
   }
 
@@ -93,7 +100,6 @@ function loop() {
 }
 
 function flap() {
-  if (!playing) return;
   bird.velocity = jump;
 }
 
