@@ -1,188 +1,25 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flappy Dabloons</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: skyblue;
-    }
-    canvas {
-      display: block;
-      background: url('https://opengameart.org/sites/default/files/background_3.png');
-      background-size: cover;
-    }
-    #playButton {
-      position: absolute;
-      top: 60%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 15px 30px;
-      font-size: 20px;
-      font-family: 'Comic Sans MS', cursive;
-      background-color: yellow;
-      border: 3px solid black;
-      cursor: pointer;
-      display: none;
-    }
-    #introText {
-      position: absolute;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 28px;
-      font-family: 'Impact', sans-serif;
-      color: white;
-      text-shadow: 2px 2px 5px black;
-      opacity: 1;
-      transition: opacity 1.5s ease-out;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="introText">GAMERABLE studios presents to you...</div>
   <button id="playButton">Play</button>
   <canvas id="gameCanvas"></canvas>
-
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    resizeCanvas();
-
-    const playButton = document.getElementById('playButton');
-    const introText = document.getElementById('introText');
-
-    let gravity = 0.4;
-    let flapStrength = -7;
-    let bird, pipes, frame;
-    let score = 0;
-    let isGameRunning = false;
-
-    function resetGame() {
-      bird = {
-        x: 80,
-        y: canvas.height / 2,
-        width: 40,
-        height: 40,
-        velocity: 0
-      };
-      pipes = [];
-      frame = 0;
-      score = 0;
-      isGameRunning = true;
-    }
-
-    function drawBird() {
-      ctx.fillStyle = "gold";
-      ctx.beginPath();
-      ctx.arc(bird.x, bird.y, bird.width / 2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawPipes() {
-      ctx.fillStyle = "green";
-      pipes.forEach(pipe => {
-        ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
-        ctx.fillRect(pipe.x, pipe.top + pipe.gap, pipe.width, canvas.height - pipe.top - pipe.gap);
-      });
-    }
-
-    function update() {
-      bird.velocity += gravity;
-      bird.y += bird.velocity;
-
-      if (frame % 100 === 0) {
-        const topHeight = Math.random() * (canvas.height / 2);
-        pipes.push({
-          x: canvas.width,
-          width: 60,
-          top: topHeight,
-          gap: 170,
-          scored: false
-        });
-      }
-
-      pipes.forEach(pipe => pipe.x -= 3);
-      pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
-
-      pipes.forEach(pipe => {
-        // Check collision
-        if (
-          bird.x + bird.width / 2 > pipe.x &&
-          bird.x - bird.width / 2 < pipe.x + pipe.width &&
-          (bird.y - bird.height / 2 < pipe.top ||
-            bird.y + bird.height / 2 > pipe.top + pipe.gap)
-        ) {
-          gameOver();
-        }
-
-        // Count score when bird passes pipe
-        if (!pipe.scored && pipe.x + pipe.width < bird.x) {
-          score++;
-          pipe.scored = true;
-        }
-      });
-
-      if (bird.y > canvas.height || bird.y < 0) gameOver();
-      frame++;
-    }
-
-    function drawScore() {
-      ctx.fillStyle = "white";
-      ctx.font = "26px Comic Sans MS";
-      ctx.fillText("Score: " + score, 20, 40);
-    }
-
-    function gameOver() {
-      isGameRunning = false;
-      playButton.style.display = "block";
-    }
-
-    function gameLoop() {
-      if (!isGameRunning) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      update();
-      drawPipes();
-      drawBird();
-      drawScore();
-      requestAnimationFrame(gameLoop);
-    }
-
-    function startGame() {
-      resetGame();
-      gameLoop();
-    }
-
-    function flap() {
-      if (!isGameRunning) return;
-      bird.velocity = flapStrength;
-    }
-
-    window.addEventListener("mousedown", flap);
-    window.addEventListener("touchstart", flap);
-    window.addEventListener("resize", resizeCanvas);
-
-    playButton.addEventListener("click", () => {
-      playButton.style.display = "none";
-      startGame();
-    });
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    setTimeout(() => {
-      introText.style.opacity = 0;
-      setTimeout(() => {
-        introText.style.display = 'none';
-        playButton.style.display = "block";
-      }, 1500);
-    }, 2000);
-  </script>
+  <div id="shop" style="display:none;">
+    <h2>Shop</h2>
+    <p>You have <span id="coins">0</span> dabloons</p>
+    <button onclick="buyItem()">Buy Cool Hat (10 dabloons)</button>
+    <button onclick="closeShop()">Close Shop</button>
+  </div>
+  <button id="restartButton" style="display:none;">Restart</button>
+  <button id="shopButton" style="display:none;">Shop</button>
+  <audio id="flapSound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"></audio>
+  <script src="game.js"></script>
 </body>
 </html>
